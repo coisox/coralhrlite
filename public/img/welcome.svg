@@ -1,0 +1,112 @@
+<svg class="marker" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 125 125" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<defs>
+		<path id="b" d="M21.9 0C10.44 0 .85 9.2.04 20.95a22.7 22.7 0 0 0 4.65 14.99l15.68 21.01a1.93 1.93 0 0 0 3.1 0l15.67-21.01a22.7 22.7 0 0 0 4.65-15C42.98 9.2 33.38 0 21.91 0zm0 27.02a7.36 7.36 0 1 1 7.33-7.33 7.35 7.35 0 0 1-7.32 7.36v-.03z"/>
+		<filter id="a" width="132%" height="124.3%" x="-16%" y="-8.7%" filterUnits="objectBoundingBox">
+			<feOffset dy="2" in="SourceAlpha" result="shadowOffsetOuter1"/>
+			<feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"/>
+			<feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0" in="shadowBlurOuter1"/>
+		</filter>
+	</defs>
+	<g class="circles" fill="#FFFFFF" fill-opacity=".2" opacity=".7">
+		<g class="circle1"><circle cx="62.5" cy="62.5" r="62.5"/></g>
+		<g class="circle2"><circle cx="62.5" cy="62.5" r="47.5"/></g>
+		<g class="circle3"><circle cx="63" cy="63" r="31"/></g>
+	</g>
+	<g class="pin" fill-rule="nonzero">
+		<use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#b"/>
+	</g>
+	<style>
+		svg {
+			display: block;
+			max-width: 300px;
+			margin: 0 auto;
+		}
+
+		svg .circles, svg .pin {
+			transform-origin: center;
+		}
+
+		svg .pin {
+			opacity: 0;
+			transform: translate(41px, 0); 
+		}
+
+		.circle1, .circle2, .circle3 {
+			transform-origin: center;
+			transform: scale(0.5);
+			opacity: 0;
+		}
+
+		svg .circles, body.finalized svg .pin {
+			transform-origin: center;
+		}
+
+		svg .circle3 {
+			animation: circlePin ease 1s 0.7s forwards, circlePin2 ease 3s 4s infinite; 
+		}
+
+		svg .circle2 {
+			animation: circlePin ease 1s 1s forwards, circlePin2 ease 3s 4.3s infinite;
+		}
+
+		svg .circle1 {
+			animation: circlePin ease 1s 1.3s forwards, circlePin2 ease 3s 4.6s infinite;
+		}
+
+		svg .pin {
+			animation: fadeDown ease 2s 1.6s forwards;
+		}
+
+		@keyframes wheel {
+			0% {
+				opacity: 1;
+				transform: translateY(0);
+			}
+			80% {
+				opacity: 0;
+				transform: translateY(20px);
+			}
+			100% {
+				opacity: 0;
+				transform: translateY(20px);
+			}
+		}
+
+		@keyframes circlePin {
+			0% {
+				opacity: 0;
+				transform: scale(0.5);
+			}
+			100% {
+				opacity: 1;
+				transform: scale(1);
+			}
+		}
+
+		@keyframes circlePin2 {
+			0% {
+				opacity: 1;
+				transform: scale(1);
+			}
+			50% {
+				opacity: 0.4;
+				transform: scale(0.5);
+			}
+			100% {
+				opacity:1;
+				transform: scale(1);
+			}
+		}
+
+		@keyframes fadeDown {
+			0% {
+				opacity: 0;
+				transform: translate(41px, 0); 
+			}
+			100% {
+				opacity: 1;
+				transform: translate(41px, 8px); 
+			}
+		}
+	</style>
+</svg>
