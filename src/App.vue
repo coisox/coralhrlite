@@ -2,7 +2,7 @@
 	<v-app>
 		<v-content>
 			<v-container fluid fill-height>
-				<router-view @childLogout="logout" v-if="isMobile" :session="session"></router-view>
+				<router-view @childLogout="logout" v-if="isMobile" :session="session" :version="version"></router-view>
 				<div v-else>We're sorry but CoralHR Lite doesn't work properly on non Android/iOS</div>
 			</v-container>
 		</v-content>
@@ -81,21 +81,19 @@
 </style>
 
 <script>
-/*
-npm install --save lingallery vue2-touch-events
-*/
 export default {
 	name: "App",
 	data() {
 		return {
 			session: {},
-			isMobile: false,
+			isMobile: true,
+			version: 'v20200708'
 		}
 	},
 	mounted: function() {
-        console.log('v20200111')
-		this.checkIsMobile()
-		window.addEventListener("resize", this.checkIsMobile, { passive: true })
+        console.log('version: ', this.version)
+		// this.checkIsMobile()
+		// window.addEventListener("resize", this.checkIsMobile, { passive: true })
 	},
 	methods: {
 		checkIsMobile() {

@@ -42,30 +42,32 @@
                 </v-dialog>
 
 				<br>Swipe right to check in, left to check out.
-				<br><lottie-player src="img/swipe.lottie" background="transparent" speed="1" loop autoplay/>
 			</div>
 
-			<template v-for="(item, index) in locations">
-				<v-divider :key="'a'+index"/>
-				<div class="swiper-container pw-100" :class="'swiper-container-'+index" :key="'b'+index">
-					<div class="swiper-wrapper">
-						<div class="swiper-slide light-green accent-4 text-right white--text d-flex align-center justify-end"><div class="light-green accent-4 swiper-bar"></div><span>Check In</span><i class="material-icons-outlined">keyboard_arrow_right</i></div>
-						<div class="swiper-slide d-flex align-center justify-space-between" @click="toggleSelected(index)">
-							<div class="light-green accent-4 swiper-bar"></div>
-							<template v-if="totalSelected>0">
-								<i class="material-icons selected text-primary pl-3" v-if="item.selected">check_circle</i>
-								<i class="material-icons unselected text-disabled pl-3" v-else>check_circle_outline</i>
-							</template>
-							<div class="pw-100 pl-3">{{item.LHC_NAMA_CAWANGAN}}</div>
-							<div class="yellow darken-1 swiper-bar"></div>
+			<div class="locations-container">
+				<template v-for="(item, index) in locations">
+					<v-divider :key="'a'+index"/>
+					<div class="swiper-container pw-100" :class="'swiper-container-'+index" :key="'b'+index">
+						<div class="swiper-wrapper">
+							<div class="swiper-slide light-green accent-4 text-right white--text d-flex align-center justify-end"><div class="light-green accent-4 swiper-bar"></div><span>Check In</span><i class="material-icons-outlined">keyboard_arrow_right</i></div>
+							<div class="swiper-slide d-flex align-center justify-space-between" @click="toggleSelected(index)">
+								<div class="light-green accent-4 swiper-bar"></div>
+								<template v-if="totalSelected>0">
+									<i class="material-icons selected text-primary pl-3" v-if="item.selected">check_circle</i>
+									<i class="material-icons unselected text-disabled pl-3" v-else>check_circle_outline</i>
+								</template>
+								<div class="pw-100 pl-3">{{item.LHC_NAMA_CAWANGAN}}</div>
+								<div class="yellow darken-1 swiper-bar"></div>
+							</div>
+							<div class="swiper-slide yellow darken-1 white--text d-flex align-center justify-start"><i class="material-icons-outlined">keyboard_arrow_left</i><span>Check Out</span><div class="yellow darken-1 swiper-bar"></div></div>
 						</div>
-						<div class="swiper-slide yellow darken-1 white--text d-flex align-center justify-start"><i class="material-icons-outlined">keyboard_arrow_left</i><span>Check Out</span><div class="yellow darken-1 swiper-bar"></div></div>
 					</div>
-				</div>
-			</template>
+				</template>
+			</div>
+
 			<v-divider/>
 
-			<v-footer absolute class="white caption grey--text justify-center text-center">To remove favourite locations, hold to select then choose delete from the menu. v20200113</v-footer>
+			<v-footer absolute class="white caption grey--text justify-center text-center">To remove locations, hold to select, choose delete from menu.<br>{{version}}</v-footer>
 
 			<v-snackbar v-model="show.checkin" color="light-green accent-4" :timeout="1000">Check in success</v-snackbar>
 			<v-snackbar v-model="show.checkout" color="pink accent-3" :timeout="1000">Check out success</v-snackbar>
@@ -116,6 +118,10 @@
 .time.v-text-field > .v-input__control > .v-input__slot:before,
 .date.v-text-field > .v-input__control > .v-input__slot:before {
     border: none !important;
+}
+.locations-container {
+	height: calc(100vh - 215px);
+    overflow-y: scroll;
 }
 
 </style>
@@ -173,7 +179,7 @@ export default {
             swiperType: ['checkin', '', 'checkout'],
 		}
     },
-    props: ['session'],
+    props: ['session', 'version'],
 	methods: {
 		childLogout: function() {
 			this.$emit('childLogout')
@@ -211,13 +217,24 @@ export default {
                             return response.json()
                         }).then(function(response) {
                             if(response.status=="ok") {
-                                self.show[self.swiperType[self.swipers[index].realIndex]] = true
+								self.show[self.swiperType[self.swipers[index].realIndex]] = true
                             }
                             else {
                                 self.error = response.message
                                 self.show.error = true
                             }
-                            self.swipers[index].slideTo(1)
+							self.swipers[index].slideTo(1)
+							
+							self.locations[index].lastswipe = moment().valueOf()
+							self.locations.sort(function(a, b) {
+								if(!a.lastswipe) a.lastswipe = moment().valueOf()
+								if(!b.lastswipe) b.lastswipe = moment().valueOf()
+
+								if(a.lastswipe > b.lastswipe) return -1;
+								else if (a.lastswipe < b.lastswipe) return 1;
+								else return 0;
+							})
+							localStorage.setItem('CORALHR_LITE_LOCATIONS', JSON.stringify(self.locations.map(function(item){ item.selected = false; return item })))
                         })
                     }
                 }).on('touchStart', function(e) {
@@ -248,11 +265,21 @@ export default {
                     LHC_ID: '',
                     LHC_NAMA_CAWANGAN: index,
                     LHC_SINGKATAN: '',
-                    selected: false
+					selected: false,
+					lastswipe: moment().valueOf()
                 }
             }
 
-            this.locations.push(location)
+			this.locations.push(location)
+			this.locations.sort(function(a, b) {
+				if(!a.lastswipe) a.lastswipe = moment().valueOf()
+				if(!b.lastswipe) b.lastswipe = moment().valueOf()
+
+				if(a.lastswipe > b.lastswipe) return -1;
+				else if (a.lastswipe < b.lastswipe) return 1;
+				else return 0;
+			})
+
             this.show.predefined = false
             this.show.customlocation = false
             this.customlocation = null
